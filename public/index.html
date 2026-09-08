@@ -1,0 +1,161 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Digital Library Management System for catalog, circulation, holds, fines, and reports.">
+  <title>University Digital Library</title>
+  <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+  <div id="toast-region" class="toast-region" aria-live="polite" aria-atomic="true"></div>
+
+  <section id="auth-screen" class="auth-screen">
+    <div class="auth-visual" aria-hidden="true">
+      <div class="auth-mark">
+        <span class="mark-icon">UL</span>
+        <span>UNIVERSITY LIBRARY</span>
+      </div>
+      <div class="visual-copy">
+        <p class="eyebrow">Knowledge, in circulation</p>
+        <h1>One calm place for every book journey.</h1>
+        <p>Search the catalog, manage loans, clear fines, and keep inventory moving—from one reliable workspace.</p>
+      </div>
+      <div class="shelf-art">
+        <span style="--h:76%;--c:#59e3c1"></span><span style="--h:56%;--c:#e2a958"></span>
+        <span style="--h:88%;--c:#7d8cff"></span><span style="--h:64%;--c:#f06b83"></span>
+        <span style="--h:95%;--c:#59e3c1"></span><span style="--h:70%;--c:#e2a958"></span>
+        <span style="--h:83%;--c:#7d8cff"></span><span style="--h:50%;--c:#f06b83"></span>
+      </div>
+      <p class="auth-footnote">Built for members, librarians, and administrators.</p>
+    </div>
+
+    <div class="auth-panel">
+      <div class="mobile-brand"><span class="brand-glyph">UL</span><strong>UniLib</strong></div>
+      <div class="auth-card">
+        <div class="auth-tabs" role="tablist" aria-label="Account access">
+          <button class="auth-tab active" type="button" data-auth-tab="login" role="tab" aria-selected="true">Sign in</button>
+          <button class="auth-tab" type="button" data-auth-tab="register" role="tab" aria-selected="false">Register</button>
+        </div>
+
+        <form id="login-form" class="auth-form">
+          <div class="form-heading">
+            <p class="eyebrow dark">Welcome back</p>
+            <h2>Open your library</h2>
+          </div>
+          <label>Email address<input name="email" type="email" autocomplete="email" placeholder="you@university.edu" required></label>
+          <label>Password<input name="password" type="password" autocomplete="current-password" placeholder="Enter your password" required></label>
+          <button class="button primary full" type="submit">Sign in <span aria-hidden="true">→</span></button>
+          <div class="demo-box">
+            <span>Quick demo</span>
+            <button type="button" class="text-button" data-demo="student">Member</button>
+            <button type="button" class="text-button" data-demo="librarian">Librarian</button>
+            <button type="button" class="text-button" data-demo="admin">Admin</button>
+          </div>
+        </form>
+
+        <form id="register-form" class="auth-form hidden">
+          <div class="form-heading">
+            <p class="eyebrow dark">New membership</p>
+            <h2>Create an account</h2>
+          </div>
+          <label>Full name<input name="name" autocomplete="name" placeholder="Your full name" minlength="2" required></label>
+          <label>Email address<input name="email" type="email" autocomplete="email" placeholder="you@university.edu" required></label>
+          <div class="form-row">
+            <label>Member type<select name="memberType" required><option value="student">Student</option><option value="faculty">Faculty</option></select></label>
+            <label>Phone <span class="muted">optional</span><input name="phone" autocomplete="tel" placeholder="9876543210"></label>
+          </div>
+          <label>Password<input name="password" type="password" autocomplete="new-password" placeholder="8+ chars, upper/lowercase & number" minlength="8" required></label>
+          <button class="button primary full" type="submit">Create membership <span aria-hidden="true">→</span></button>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <div id="app-shell" class="app-shell hidden">
+    <aside id="sidebar" class="sidebar">
+      <div class="brand"><span class="brand-glyph">UL</span><div><strong>UniLib</strong><small>Digital Library</small></div></div>
+      <nav class="nav" aria-label="Main navigation">
+        <button class="nav-item active" data-view="dashboard"><span class="nav-icon">⌂</span><span>Overview</span></button>
+        <button class="nav-item" data-view="catalog"><span class="nav-icon">▤</span><span>Catalog</span></button>
+        <button class="nav-item" data-view="circulation"><span class="nav-icon">⇄</span><span>Circulation</span></button>
+        <button class="nav-item" data-view="holds"><span class="nav-icon">◇</span><span>Holds</span></button>
+        <button class="nav-item staff-only" data-view="members"><span class="nav-icon">◎</span><span>Members</span></button>
+        <button class="nav-item staff-only" data-view="reports"><span class="nav-icon">▥</span><span>Reports</span></button>
+        <button class="nav-item admin-only" data-view="admin"><span class="nav-icon">⚙</span><span>Administration</span></button>
+      </nav>
+      <div class="sidebar-foot">
+        <div id="sidebar-user" class="sidebar-user"></div>
+        <button id="logout-button" class="logout-button" type="button">Sign out <span>↗</span></button>
+      </div>
+    </aside>
+
+    <main class="main">
+      <header class="topbar">
+        <button id="menu-button" class="icon-button menu-button" aria-label="Open navigation">☰</button>
+        <div>
+          <p id="topbar-kicker" class="topbar-kicker">Workspace</p>
+          <h1 id="page-title">Overview</h1>
+        </div>
+        <div class="topbar-actions">
+          <button id="notification-button" class="icon-button member-only" type="button" aria-label="Notifications">♢<span id="notification-badge" class="notification-badge hidden">0</span></button>
+          <div id="topbar-avatar" class="avatar">U</div>
+        </div>
+      </header>
+
+      <section id="view-container" class="view-container" tabindex="-1"></section>
+    </main>
+  </div>
+
+  <div id="drawer-backdrop" class="drawer-backdrop hidden"></div>
+  <aside id="notification-drawer" class="notification-drawer" aria-label="Notifications" aria-hidden="true">
+    <div class="drawer-header"><div><p class="eyebrow dark">Updates</p><h2>Notifications</h2></div><button id="drawer-close" class="icon-button">×</button></div>
+    <div class="drawer-actions"><button id="read-all-button" class="text-button">Mark all as read</button></div>
+    <div id="notification-list" class="notification-list"></div>
+  </aside>
+
+  <dialog id="book-dialog" class="modal">
+    <form id="book-form" method="dialog">
+      <div class="modal-head"><div><p class="eyebrow dark">Catalog record</p><h2 id="book-dialog-title">Add a book</h2></div><button class="icon-button" value="cancel" formmethod="dialog">×</button></div>
+      <input type="hidden" name="bookId">
+      <div class="form-grid">
+        <label class="span-2">Title<input name="title" required maxlength="200"></label>
+        <label>Author<input name="author" required maxlength="160"></label>
+        <label>ISBN<input name="isbn" required minlength="5"></label>
+        <label>Category<input name="category" required maxlength="80"></label>
+        <label>Total copies<input name="totalCopies" type="number" min="1" value="1" required></label>
+        <label>Publisher<input name="publisher"></label>
+        <label>Published year<input name="publishedYear" type="number" min="1000" max="3000"></label>
+        <label>Shelf location<input name="shelfLocation" placeholder="A-01"></label>
+        <label class="span-2">Cover URL<input name="coverUrl" type="url" placeholder="https://..."></label>
+        <label class="span-2">Description<textarea name="description" rows="3" maxlength="1500"></textarea></label>
+      </div>
+      <div class="modal-actions"><button class="button ghost" value="cancel" formmethod="dialog">Cancel</button><button class="button primary" type="submit">Save book</button></div>
+    </form>
+  </dialog>
+
+  <dialog id="issue-dialog" class="modal small-modal">
+    <form id="issue-form" method="dialog">
+      <div class="modal-head"><div><p class="eyebrow dark">Circulation desk</p><h2>Issue a book</h2></div><button class="icon-button" value="cancel" formmethod="dialog">×</button></div>
+      <label>Member<select name="memberId" id="issue-member" required></select></label>
+      <label>Book<select name="bookId" id="issue-book" required></select></label>
+      <label>Custom due date <span class="muted">optional</span><input name="dueDate" type="date"></label>
+      <div class="modal-actions"><button class="button ghost" value="cancel" formmethod="dialog">Cancel</button><button class="button primary" type="submit">Issue book</button></div>
+    </form>
+  </dialog>
+
+  <dialog id="payment-dialog" class="modal small-modal">
+    <form id="payment-form" method="dialog">
+      <div class="modal-head"><div><p class="eyebrow dark">Fine collection</p><h2>Record payment</h2></div><button class="icon-button" value="cancel" formmethod="dialog">×</button></div>
+      <input name="transactionId" type="hidden">
+      <p id="payment-context" class="context-box"></p>
+      <label>Amount<input name="amount" type="number" min="0.01" step="0.01" required></label>
+      <label>Method<select name="method"><option value="upi">UPI</option><option value="cash">Cash</option><option value="card">Card</option><option value="bank-transfer">Bank transfer</option></select></label>
+      <label>Reference <span class="muted">optional</span><input name="reference" maxlength="120"></label>
+      <div class="modal-actions"><button class="button ghost" value="cancel" formmethod="dialog">Cancel</button><button class="button primary" type="submit">Record payment</button></div>
+    </form>
+  </dialog>
+
+  <script src="/js/app.js" defer></script>
+</body>
+</html>

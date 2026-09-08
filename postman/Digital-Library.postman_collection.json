@@ -1,0 +1,2957 @@
+{
+  "info": {
+    "_postman_id": "2a41d4a3-713d-4dc5-b87f-37cb0ae33b93",
+    "name": "Digital Library Management System — Complete API",
+    "description": "CIA-3 collection covering authentication, catalog, circulation, holds, fines, notifications, inventory, member history, reports, settings, and RBAC. Run the seed script before using the demo logins.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{token}}",
+        "type": "string"
+      }
+    ]
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:4000"
+    },
+    {
+      "key": "token",
+      "value": ""
+    },
+    {
+      "key": "memberToken",
+      "value": ""
+    },
+    {
+      "key": "librarianToken",
+      "value": ""
+    },
+    {
+      "key": "adminToken",
+      "value": ""
+    },
+    {
+      "key": "memberId",
+      "value": ""
+    },
+    {
+      "key": "bookId",
+      "value": ""
+    },
+    {
+      "key": "transactionId",
+      "value": ""
+    },
+    {
+      "key": "holdId",
+      "value": ""
+    },
+    {
+      "key": "paymentId",
+      "value": ""
+    },
+    {
+      "key": "planId",
+      "value": ""
+    },
+    {
+      "key": "notificationId",
+      "value": ""
+    },
+    {
+      "key": "staffId",
+      "value": ""
+    },
+    {
+      "key": "demoReturnDate",
+      "value": ""
+    }
+  ],
+  "item": [
+    {
+      "name": "00 — Health and Authentication",
+      "item": [
+        {
+          "name": "API health",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "auth": {
+              "type": "noauth"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/health",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "health"
+              ]
+            },
+            "description": ""
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Response is JSON\", function () { pm.response.to.be.json; });",
+                  "pm.test(\"Request succeeded\", function () { pm.expect(pm.response.code).to.be.below(400); });",
+                  "const json = pm.response.json();",
+                  "pm.test(\"Uses the standard success envelope\", function () { pm.expect(json.success).to.eql(true); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Register member",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "auth": {
+              "type": "noauth"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/register",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "register"
+              ]
+            },
+            "description": "Change the email if this account already exists.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Postman Student\",\n  \"email\": \"postman.student@example.com\",\n  \"password\": \"Student123!\",\n  \"memberType\": \"student\",\n  \"phone\": \"9876543210\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Response is JSON\", function () { pm.response.to.be.json; });",
+                  "pm.test(\"Request succeeded\", function () { pm.expect(pm.response.code).to.be.below(400); });",
+                  "const json = pm.response.json();",
+                  "pm.test(\"Uses the standard success envelope\", function () { pm.expect(json.success).to.eql(true); });",
+                  "pm.collectionVariables.set(\"memberToken\", json.data.token);",
+                  "pm.collectionVariables.set(\"token\", json.data.token);",
+                  "pm.collectionVariables.set(\"memberId\", json.data.user._id);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Login demo member",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "auth": {
+              "type": "noauth"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "login"
+              ]
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"student@library.local\",\n  \"password\": \"Student123!\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Response is JSON\", function () { pm.response.to.be.json; });",
+                  "pm.test(\"Request succeeded\", function () { pm.expect(pm.response.code).to.be.below(400); });",
+                  "const json = pm.response.json();",
+                  "pm.test(\"Uses the standard success envelope\", function () { pm.expect(json.success).to.eql(true); });",
+                  "pm.collectionVariables.set(\"memberToken\", json.data.token);",
+                  "pm.collectionVariables.set(\"token\", json.data.token);",
+                  "pm.collectionVariables.set(\"memberId\", json.data.user._id);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Login demo librarian",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "auth": {
+              "type": "noauth"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "login"
+              ]
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"librarian@library.local\",\n  \"password\": \"Library123!\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Response is JSON\", function () { pm.response.to.be.json; });",
+                  "pm.test(\"Request succeeded\", function () { pm.expect(pm.response.code).to.be.below(400); });",
+                  "const json = pm.response.json();",
+                  "pm.test(\"Uses the standard success envelope\", function () { pm.expect(json.success).to.eql(true); });",
+                  "pm.collectionVariables.set(\"librarianToken\", json.data.token);",
+                  "pm.collectionVariables.set(\"token\", json.data.token);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Login demo admin",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "auth": {
+              "type": "noauth"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "login"
+              ]
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"admin@library.local\",\n  \"password\": \"ChangeMe123!\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Response is JSON\", function () { pm.response.to.be.json; });",
+                  "pm.test(\"Request succeeded\", function () { pm.expect(pm.response.code).to.be.below(400); });",
+                  "const json = pm.response.json();",
+                  "pm.test(\"Uses the standard success envelope\", function () { pm.expect(json.success).to.eql(true); });",
+                  "pm.collectionVariables.set(\"adminToken\", json.data.token);",
+                  "pm.collectionVariables.set(\"token\", json.data.token);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Current profile",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/me",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "me"
+              ]
+            },
+            "description": ""
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Response is JSON\", function () { pm.response.to.be.json; });",
+                  "pm.test(\"Request succeeded\", function () { pm.expect(pm.response.code).to.be.below(400); });",
+                  "const json = pm.response.json();",
+                  "pm.test(\"Uses the standard success envelope\", function () { pm.expect(json.success).to.eql(true); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Update current profile",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{memberToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/me",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "me"
+              ]
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Postman Student\",\n  \"phone\": \"9999999999\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Response is JSON\", function () { pm.response.to.be.json; });",
+                  "pm.test(\"Request succeeded\", function () { pm.expect(pm.response.code).to.be.below(400); });",
+                  "const json = pm.response.json();",
+                  "pm.test(\"Uses the standard success envelope\", function () { pm.expect(json.success).to.eql(true); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Missing-token check (expected 401)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "auth": {
+              "type": "noauth"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/me",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "me"
+              ]
+            },
+            "description": ""
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Response is JSON\", function () { pm.response.to.be.json; });",
+                  "pm.test(\"Request succeeded\", function () { pm.expect(pm.response.code).to.be.below(400); });",
+                  "const json = pm.response.json();",
+                  "pm.test(\"Uses the standard success envelope\", function () { pm.expect(json.success).to.eql(true); });",
+                  "pm.test(\"Returns 401\", function () { pm.response.to.have.status(401); });",
+                  "const json = pm.response.json();",
+                  "pm.test(\"Uses error envelope\", function () { pm.expect(json.success).to.eql(false); pm.expect(json.errorCode).to.exist; });"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "01 — Catalog and Inventory",
+      "item": [
+        {
+          "name": "List and search catalog",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "auth": {
+              "type": "noauth"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/books?limit=100&q=learning",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "books?limit=100&q=learning"
+              ]
+            },
+            "description": ""
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Response is JSON\", function () { pm.response.to.be.json; });",
+                  "pm.test(\"Request succeeded\", function () { pm.expect(pm.response.code).to.be.below(400); });",
+                  "const json = pm.response.json();",
+                  "pm.test(\"Uses the standard success envelope\", function () { pm.expect(json.success).to.eql(true); });",
+                  "if (json.data.length) { pm.collectionVariables.set(\"bookId\", json.data[0]._id); }"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "List all catalog books and save first ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "auth": {
+              "type": "noauth"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/books?limit=100",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "books?limit=100"
+              ]
+            },
+            "description": ""
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Response is JSON\", function () { pm.response.to.be.json; });",
+                  "pm.test(\"Request succeeded\", function () { pm.expect(pm.response.code).to.be.below(400); });",
+                  "const json = pm.response.json();",
+                  "pm.test(\"Uses the standard success envelope\", function () { pm.expect(json.success).to.eql(true); });",
+                  "pm.test(\"Catalog is an array\", function () { pm.expect(json.data).to.be.an(\"array\"); });",
+                  "if (json.data.length) { pm.collectionVariables.set(\"bookId\", json.data[0]._id); }"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "List categories",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "auth": {
+              "type": "noauth"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/books/categories",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "books",
+                "categories"
+              ]
+            },
+            "description": ""
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Response is JSON\", function () { pm.response.to.be.json; });",
+                  "pm.test(\"Request succeeded\", function () { pm.expect(pm.response.code).to.be.below(400); });",
+                  "const json = pm.response.json();",
+                  "pm.test(\"Uses the standard success envelope\", function () { pm.expect(json.success).to.eql(true); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get one book",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "auth": {
+              "type": "noauth"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/books/{{bookId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "books",
+                "{{bookId}}"
+              ]
+            },
+            "description": ""
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Response is JSON\", function () { pm.response.to.be.json; });",
+                  "pm.test(\"Request succeeded\", function () { pm.expect(pm.response.code).to.be.below(400); });",
+                  "const json = pm.response.json();",
+                  "pm.test(\"Uses the standard success envelope\", function () { pm.expect(json.success).to.eql(true); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Create book",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{librarianToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/books",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "books"
+              ]
+            },
+            "description": "Change the ISBN when repeating this request.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Responsible AI Engineering\",\n  \"author\": \"CIA-3 Team\",\n  \"isbn\": \"CIA3-POSTMAN-001\",\n  \"category\": \"Artificial Intelligence\",\n  \"totalCopies\": 3,\n  \"publisher\": \"University Press\",\n  \"publishedYear\": 2026,\n  \"shelfLocation\": \"D-01\",\n  \"description\": \"A demonstration catalog record created through Postman.\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Response is JSON\", function () { pm.response.to.be.json; });",
+                  "pm.test(\"Request succeeded\", function () { pm.expect(pm.response.code).to.be.below(400); });",
+                  "const json = pm.response.json();",
+                  "pm.test(\"Uses the standard success envelope\", function () { pm.expect(json.success).to.eql(true); });",
+                  "pm.collectionVariables.set(\"bookId\", json.data._id);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Update book details",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{librarianToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/books/{{bookId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "books",
+                "{{bookId}}"
+              ]
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"shelfLocation\": \"D-02\",\n  \"category\": \"Responsible AI\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Response is JSON\", function () { pm.response.to.be.json; });",
+                  "pm.test(\"Request succeeded\", function () { pm.expect(pm.response.code).to.be.below(400); });",
+                  "const json = pm.response.json();",
+                  "pm.test(\"Uses the standard success envelope\", function () { pm.expect(json.success).to.eql(true); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Add inventory copy",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{librarianToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/books/{{bookId}}/inventory",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "books",
+                "{{bookId}}",
+                "inventory"
+              ]
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"action\": \"add\",\n  \"quantity\": 1\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Response is JSON\", function () { pm.response.to.be.json; });",
+                  "pm.test(\"Request succeeded\", function () { pm.expect(pm.response.code).to.be.below(400); });",
+                  "const json = pm.response.json();",
+                  "pm.test(\"Uses the standard success envelope\", function () { pm.expect(json.success).to.eql(true); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Mark inventory copy damaged",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{librarianToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/books/{{bookId}}/inventory",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "books",
+                "{{bookId}}",
+                "inventory"
+              ]
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"action\": \"mark-damaged\",\n  \"quantity\": 1\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Response is JSON\", function () { pm.response.to.be.json; });",
+                  "pm.test(\"Request succeeded\", function () { pm.expect(pm.response.code).to.be.below(400); });",
+                  "const json = pm.response.json();",
+                  "pm.test(\"Uses the standard success envelope\", function () { pm.expect(json.success).to.eql(true); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Repair damaged copy",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{librarianToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/books/{{bookId}}/inventory",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "books",
+                "{{bookId}}",
+                "inventory"
+              ]
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"action\": \"repair-damaged\",\n  \"quantity\": 1\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Response is JSON\", function () { pm.response.to.be.json; });",
+                  "pm.test(\"Request succeeded\", function () { pm.expect(pm.response.code).to.be.below(400); });",
+                  "const json = pm.response.json();",
+                  "pm.test(\"Uses the standard success envelope\", function () { pm.expect(json.success).to.eql(true); });"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "02 — Members and Circulation",
+      "item": [
+        {
+          "name": "List members and save first ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{librarianToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/members?limit=100&active=true",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "members?limit=100&active=true"
+              ]
+            },
+            "description": ""
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Response is JSON\", function () { pm.response.to.be.json; });",
+                  "pm.test(\"Request succeeded\", function () { pm.expect(pm.response.code).to.be.below(400); });",
+                  "const json = pm.response.json();",
+                  "pm.test(\"Uses the standard success envelope\", function () { pm.expect(json.success).to.eql(true); });",
+                  "pm.test(\"Member list returned\", function () { pm.expect(json.data).to.be.an(\"array\"); });",
+                  "if (json.data.length) { pm.collectionVariables.set(\"memberId\", json.data[0]._id); }"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Issue book at circulation desk",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{librarianToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/transactions/issue",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "transactions",
+                "issue"
+              ]
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"bookId\": \"{{bookId}}\",\n  \"memberId\": \"{{memberId}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Response is JSON\", function () { pm.response.to.be.json; });",
+                  "pm.test(\"Request succeeded\", function () { pm.expect(pm.response.code).to.be.below(400); });",
+                  "const json = pm.response.json();",
+                  "pm.test(\"Uses the standard success envelope\", function () { pm.expect(json.success).to.eql(true); });",
+                  "pm.collectionVariables.set(\"transactionId\", json.data._id);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Member self-borrow",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{memberToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/transactions/borrow",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "transactions",
+                "borrow"
+              ]
+            },
+            "description": "Use another available book ID if the desk-issue request used this same member and book.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"bookId\": \"{{bookId}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Response is JSON\", function () { pm.response.to.be.json; });",
+                  "pm.test(\"Request succeeded\", function () { pm.expect(pm.response.code).to.be.below(400); });",
+                  "const json = pm.response.json();",
+                  "pm.test(\"Uses the standard success envelope\", function () { pm.expect(json.success).to.eql(true); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "List member transactions",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{memberToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/transactions/my?limit=100",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "transactions",
+                "my?limit=100"
+              ]
+            },
+            "description": ""
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Response is JSON\", function () { pm.response.to.be.json; });",
+                  "pm.test(\"Request succeeded\", function () { pm.expect(pm.response.code).to.be.below(400); });",
+                  "const json = pm.response.json();",
+                  "pm.test(\"Uses the standard success envelope\", function () { pm.expect(json.success).to.eql(true); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "List all transactions",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{librarianToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/transactions?limit=100",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "transactions?limit=100"
+              ]
+            },
+            "description": ""
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Response is JSON\", function () { pm.response.to.be.json; });",
+                  "pm.test(\"Request succeeded\", function () { pm.expect(pm.response.code).to.be.below(400); });",
+                  "const json = pm.response.json();",
+                  "pm.test(\"Uses the standard success envelope\", function () { pm.expect(json.success).to.eql(true); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get one transaction",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{librarianToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/transactions/{{transactionId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "transactions",
+                "{{transactionId}}"
+              ]
+            },
+            "description": ""
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Response is JSON\", function () { pm.response.to.be.json; });",
+                  "pm.test(\"Request succeeded\", function () { pm.expect(pm.response.code).to.be.below(400); });",
+                  "const json = pm.response.json();",
+                  "pm.test(\"Uses the standard success envelope\", function () { pm.expect(json.success).to.eql(true); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Return book and calculate fine",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{librarianToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/transactions/{{transactionId}}/return",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "transactions",
+                "{{transactionId}}",
+                "return"
+              ]
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"condition\": \"good\",\n  \"returnDate\": \"{{demoReturnDate}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const future = new Date();",
+                  "future.setUTCDate(future.getUTCDate() + 45);",
+                  "pm.collectionVariables.set(\"demoReturnDate\", future.toISOString());"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Response is JSON\", function () { pm.response.to.be.json; });",
+                  "pm.test(\"Request succeeded\", function () { pm.expect(pm.response.code).to.be.below(400); });",
+                  "const json = pm.response.json();",
+                  "pm.test(\"Uses the standard success envelope\", function () { pm.expect(json.success).to.eql(true); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Member borrowing history",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{librarianToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/members/{{memberId}}/history",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "members",
+                "{{memberId}}",
+                "history"
+              ]
+            },
+            "description": ""
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Response is JSON\", function () { pm.response.to.be.json; });",
+                  "pm.test(\"Request succeeded\", function () { pm.expect(pm.response.code).to.be.below(400); });",
+                  "const json = pm.response.json();",
+                  "pm.test(\"Uses the standard success envelope\", function () { pm.expect(json.success).to.eql(true); });"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "03 — Holds and Notifications",
+      "item": [
+        {
+          "name": "Place hold",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{memberToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/holds",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "holds"
+              ]
+            },
+            "description": "The selected title must be unavailable or already have an active queue.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"bookId\": \"{{bookId}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Response is JSON\", function () { pm.response.to.be.json; });",
+                  "pm.test(\"Request succeeded\", function () { pm.expect(pm.response.code).to.be.below(400); });",
+                  "const json = pm.response.json();",
+                  "pm.test(\"Uses the standard success envelope\", function () { pm.expect(json.success).to.eql(true); });",
+                  "pm.collectionVariables.set(\"holdId\", json.data.hold._id);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "List my holds",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{memberToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/holds/my",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "holds",
+                "my"
+              ]
+            },
+            "description": ""
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Response is JSON\", function () { pm.response.to.be.json; });",
+                  "pm.test(\"Request succeeded\", function () { pm.expect(pm.response.code).to.be.below(400); });",
+                  "const json = pm.response.json();",
+                  "pm.test(\"Uses the standard success envelope\", function () { pm.expect(json.success).to.eql(true); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "List all holds",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{librarianToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/holds",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "holds"
+              ]
+            },
+            "description": ""
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Response is JSON\", function () { pm.response.to.be.json; });",
+                  "pm.test(\"Request succeeded\", function () { pm.expect(pm.response.code).to.be.below(400); });",
+                  "const json = pm.response.json();",
+                  "pm.test(\"Uses the standard success envelope\", function () { pm.expect(json.success).to.eql(true); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Book hold queue",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{librarianToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/holds/book/{{bookId}}/queue",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "holds",
+                "book",
+                "{{bookId}}",
+                "queue"
+              ]
+            },
+            "description": ""
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Response is JSON\", function () { pm.response.to.be.json; });",
+                  "pm.test(\"Request succeeded\", function () { pm.expect(pm.response.code).to.be.below(400); });",
+                  "const json = pm.response.json();",
+                  "pm.test(\"Uses the standard success envelope\", function () { pm.expect(json.success).to.eql(true); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Mark hold ready",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{librarianToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/holds/{{holdId}}/status",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "holds",
+                "{{holdId}}",
+                "status"
+              ]
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"ready\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Response is JSON\", function () { pm.response.to.be.json; });",
+                  "pm.test(\"Request succeeded\", function () { pm.expect(pm.response.code).to.be.below(400); });",
+                  "const json = pm.response.json();",
+                  "pm.test(\"Uses the standard success envelope\", function () { pm.expect(json.success).to.eql(true); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Expire elapsed ready holds",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{librarianToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/holds/expire-ready",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "holds",
+                "expire-ready"
+              ]
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Response is JSON\", function () { pm.response.to.be.json; });",
+                  "pm.test(\"Request succeeded\", function () { pm.expect(pm.response.code).to.be.below(400); });",
+                  "const json = pm.response.json();",
+                  "pm.test(\"Uses the standard success envelope\", function () { pm.expect(json.success).to.eql(true); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Cancel hold",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{memberToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/holds/{{holdId}}/cancel",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "holds",
+                "{{holdId}}",
+                "cancel"
+              ]
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Response is JSON\", function () { pm.response.to.be.json; });",
+                  "pm.test(\"Request succeeded\", function () { pm.expect(pm.response.code).to.be.below(400); });",
+                  "const json = pm.response.json();",
+                  "pm.test(\"Uses the standard success envelope\", function () { pm.expect(json.success).to.eql(true); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Generate overdue notifications",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{librarianToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/notifications/generate-overdue",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "notifications",
+                "generate-overdue"
+              ]
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Response is JSON\", function () { pm.response.to.be.json; });",
+                  "pm.test(\"Request succeeded\", function () { pm.expect(pm.response.code).to.be.below(400); });",
+                  "const json = pm.response.json();",
+                  "pm.test(\"Uses the standard success envelope\", function () { pm.expect(json.success).to.eql(true); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "List my notifications",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{memberToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/notifications/my",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "notifications",
+                "my"
+              ]
+            },
+            "description": ""
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Response is JSON\", function () { pm.response.to.be.json; });",
+                  "pm.test(\"Request succeeded\", function () { pm.expect(pm.response.code).to.be.below(400); });",
+                  "const json = pm.response.json();",
+                  "pm.test(\"Uses the standard success envelope\", function () { pm.expect(json.success).to.eql(true); });",
+                  "if (json.data.length) { pm.collectionVariables.set(\"notificationId\", json.data[0]._id); }"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Mark one notification read",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{memberToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/notifications/{{notificationId}}/read",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "notifications",
+                "{{notificationId}}",
+                "read"
+              ]
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Response is JSON\", function () { pm.response.to.be.json; });",
+                  "pm.test(\"Request succeeded\", function () { pm.expect(pm.response.code).to.be.below(400); });",
+                  "const json = pm.response.json();",
+                  "pm.test(\"Uses the standard success envelope\", function () { pm.expect(json.success).to.eql(true); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Mark all notifications read",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{memberToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/notifications/read-all",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "notifications",
+                "read-all"
+              ]
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Response is JSON\", function () { pm.response.to.be.json; });",
+                  "pm.test(\"Request succeeded\", function () { pm.expect(pm.response.code).to.be.below(400); });",
+                  "const json = pm.response.json();",
+                  "pm.test(\"Uses the standard success envelope\", function () { pm.expect(json.success).to.eql(true); });"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "04 — Fines and Payments",
+      "item": [
+        {
+          "name": "Record fine payment",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{librarianToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/fine-payments",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "fine-payments"
+              ]
+            },
+            "description": "Set amount at or below the outstanding fine balance.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"transactionId\": \"{{transactionId}}\",\n  \"amount\": 5,\n  \"method\": \"upi\",\n  \"reference\": \"UPI-DEMO-001\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Response is JSON\", function () { pm.response.to.be.json; });",
+                  "pm.test(\"Request succeeded\", function () { pm.expect(pm.response.code).to.be.below(400); });",
+                  "const json = pm.response.json();",
+                  "pm.test(\"Uses the standard success envelope\", function () { pm.expect(json.success).to.eql(true); });",
+                  "pm.collectionVariables.set(\"paymentId\", json.data.payment._id);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "List member payments",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{memberToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/fine-payments/my",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "fine-payments",
+                "my"
+              ]
+            },
+            "description": ""
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Response is JSON\", function () { pm.response.to.be.json; });",
+                  "pm.test(\"Request succeeded\", function () { pm.expect(pm.response.code).to.be.below(400); });",
+                  "const json = pm.response.json();",
+                  "pm.test(\"Uses the standard success envelope\", function () { pm.expect(json.success).to.eql(true); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "List all payments",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{librarianToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/fine-payments?limit=100",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "fine-payments?limit=100"
+              ]
+            },
+            "description": ""
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Response is JSON\", function () { pm.response.to.be.json; });",
+                  "pm.test(\"Request succeeded\", function () { pm.expect(pm.response.code).to.be.below(400); });",
+                  "const json = pm.response.json();",
+                  "pm.test(\"Uses the standard success envelope\", function () { pm.expect(json.success).to.eql(true); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Waive remaining fine",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{librarianToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/transactions/{{transactionId}}/waive-fine",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "transactions",
+                "{{transactionId}}",
+                "waive-fine"
+              ]
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"reason\": \"Approved academic exception\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Response is JSON\", function () { pm.response.to.be.json; });",
+                  "pm.test(\"Request succeeded\", function () { pm.expect(pm.response.code).to.be.below(400); });",
+                  "const json = pm.response.json();",
+                  "pm.test(\"Uses the standard success envelope\", function () { pm.expect(json.success).to.eql(true); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Reverse payment",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/fine-payments/{{paymentId}}/reverse",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "fine-payments",
+                "{{paymentId}}",
+                "reverse"
+              ]
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"reason\": \"Demonstration reversal\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Response is JSON\", function () { pm.response.to.be.json; });",
+                  "pm.test(\"Request succeeded\", function () { pm.expect(pm.response.code).to.be.below(400); });",
+                  "const json = pm.response.json();",
+                  "pm.test(\"Uses the standard success envelope\", function () { pm.expect(json.success).to.eql(true); });"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "05 — Reports",
+      "item": [
+        {
+          "name": "Dashboard summary",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{librarianToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/reports/dashboard",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "reports",
+                "dashboard"
+              ]
+            },
+            "description": ""
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Response is JSON\", function () { pm.response.to.be.json; });",
+                  "pm.test(\"Request succeeded\", function () { pm.expect(pm.response.code).to.be.below(400); });",
+                  "const json = pm.response.json();",
+                  "pm.test(\"Uses the standard success envelope\", function () { pm.expect(json.success).to.eql(true); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Most borrowed books",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{librarianToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/reports/most-borrowed?limit=10",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "reports",
+                "most-borrowed?limit=10"
+              ]
+            },
+            "description": ""
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Response is JSON\", function () { pm.response.to.be.json; });",
+                  "pm.test(\"Request succeeded\", function () { pm.expect(pm.response.code).to.be.below(400); });",
+                  "const json = pm.response.json();",
+                  "pm.test(\"Uses the standard success envelope\", function () { pm.expect(json.success).to.eql(true); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Overdue report",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{librarianToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/admin/reports/overdue",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "admin",
+                "reports",
+                "overdue"
+              ]
+            },
+            "description": ""
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Response is JSON\", function () { pm.response.to.be.json; });",
+                  "pm.test(\"Request succeeded\", function () { pm.expect(pm.response.code).to.be.below(400); });",
+                  "const json = pm.response.json();",
+                  "pm.test(\"Uses the standard success envelope\", function () { pm.expect(json.success).to.eql(true); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Inventory health",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{librarianToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/reports/inventory-health",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "reports",
+                "inventory-health"
+              ]
+            },
+            "description": ""
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Response is JSON\", function () { pm.response.to.be.json; });",
+                  "pm.test(\"Request succeeded\", function () { pm.expect(pm.response.code).to.be.below(400); });",
+                  "const json = pm.response.json();",
+                  "pm.test(\"Uses the standard success envelope\", function () { pm.expect(json.success).to.eql(true); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Fine summary",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{librarianToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/reports/fines",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "reports",
+                "fines"
+              ]
+            },
+            "description": ""
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Response is JSON\", function () { pm.response.to.be.json; });",
+                  "pm.test(\"Request succeeded\", function () { pm.expect(pm.response.code).to.be.below(400); });",
+                  "const json = pm.response.json();",
+                  "pm.test(\"Uses the standard success envelope\", function () { pm.expect(json.success).to.eql(true); });"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "06 — Admin, Plans, and Settings",
+      "item": [
+        {
+          "name": "Get library settings",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/settings",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "settings"
+              ]
+            },
+            "description": ""
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Response is JSON\", function () { pm.response.to.be.json; });",
+                  "pm.test(\"Request succeeded\", function () { pm.expect(pm.response.code).to.be.below(400); });",
+                  "const json = pm.response.json();",
+                  "pm.test(\"Uses the standard success envelope\", function () { pm.expect(json.success).to.eql(true); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Update library settings",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/settings",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "settings"
+              ]
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"libraryName\": \"University Digital Library\",\n  \"currency\": \"INR\",\n  \"holdReadyDays\": 2,\n  \"allowMemberSelfBorrow\": true,\n  \"allowMemberSelfReturn\": true\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Response is JSON\", function () { pm.response.to.be.json; });",
+                  "pm.test(\"Request succeeded\", function () { pm.expect(pm.response.code).to.be.below(400); });",
+                  "const json = pm.response.json();",
+                  "pm.test(\"Uses the standard success envelope\", function () { pm.expect(json.success).to.eql(true); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "List membership plans",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/membership-plans",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "membership-plans"
+              ]
+            },
+            "description": ""
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Response is JSON\", function () { pm.response.to.be.json; });",
+                  "pm.test(\"Request succeeded\", function () { pm.expect(pm.response.code).to.be.below(400); });",
+                  "const json = pm.response.json();",
+                  "pm.test(\"Uses the standard success envelope\", function () { pm.expect(json.success).to.eql(true); });",
+                  "if (json.data.length) { pm.collectionVariables.set(\"planId\", json.data[0]._id); }"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Create membership plan",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/membership-plans",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "membership-plans"
+              ]
+            },
+            "description": "Change the key when repeating this request.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"key\": \"student-postman\",\n  \"name\": \"Student Postman Plan\",\n  \"memberType\": \"student\",\n  \"maxBooks\": 5,\n  \"loanDays\": 21,\n  \"finePerDay\": 4,\n  \"graceDays\": 1,\n  \"isActive\": true\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Response is JSON\", function () { pm.response.to.be.json; });",
+                  "pm.test(\"Request succeeded\", function () { pm.expect(pm.response.code).to.be.below(400); });",
+                  "const json = pm.response.json();",
+                  "pm.test(\"Uses the standard success envelope\", function () { pm.expect(json.success).to.eql(true); });",
+                  "pm.collectionVariables.set(\"planId\", json.data._id);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Update membership plan",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/membership-plans/{{planId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "membership-plans",
+                "{{planId}}"
+              ]
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"maxBooks\": 6,\n  \"loanDays\": 21\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Response is JSON\", function () { pm.response.to.be.json; });",
+                  "pm.test(\"Request succeeded\", function () { pm.expect(pm.response.code).to.be.below(400); });",
+                  "const json = pm.response.json();",
+                  "pm.test(\"Uses the standard success envelope\", function () { pm.expect(json.success).to.eql(true); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "List all users",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/admin/users?limit=100",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "admin",
+                "users?limit=100"
+              ]
+            },
+            "description": ""
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Response is JSON\", function () { pm.response.to.be.json; });",
+                  "pm.test(\"Request succeeded\", function () { pm.expect(pm.response.code).to.be.below(400); });",
+                  "const json = pm.response.json();",
+                  "pm.test(\"Uses the standard success envelope\", function () { pm.expect(json.success).to.eql(true); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Create librarian",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/admin/users/staff",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "admin",
+                "users",
+                "staff"
+              ]
+            },
+            "description": "Change the email when repeating this request.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Postman Librarian\",\n  \"email\": \"postman.librarian@example.com\",\n  \"password\": \"Library123!\",\n  \"role\": \"librarian\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Response is JSON\", function () { pm.response.to.be.json; });",
+                  "pm.test(\"Request succeeded\", function () { pm.expect(pm.response.code).to.be.below(400); });",
+                  "const json = pm.response.json();",
+                  "pm.test(\"Uses the standard success envelope\", function () { pm.expect(json.success).to.eql(true); });",
+                  "pm.collectionVariables.set(\"staffId\", json.data._id);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Disable staff account",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/admin/users/{{staffId}}/status",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "admin",
+                "users",
+                "{{staffId}}",
+                "status"
+              ]
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"isActive\": false\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Response is JSON\", function () { pm.response.to.be.json; });",
+                  "pm.test(\"Request succeeded\", function () { pm.expect(pm.response.code).to.be.below(400); });",
+                  "const json = pm.response.json();",
+                  "pm.test(\"Uses the standard success envelope\", function () { pm.expect(json.success).to.eql(true); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Enable staff account",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/admin/users/{{staffId}}/status",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "admin",
+                "users",
+                "{{staffId}}",
+                "status"
+              ]
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"isActive\": true\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Response is JSON\", function () { pm.response.to.be.json; });",
+                  "pm.test(\"Request succeeded\", function () { pm.expect(pm.response.code).to.be.below(400); });",
+                  "const json = pm.response.json();",
+                  "pm.test(\"Uses the standard success envelope\", function () { pm.expect(json.success).to.eql(true); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Wrong-role check (expected 403)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{memberToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/admin/users",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "admin",
+                "users"
+              ]
+            },
+            "description": ""
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Response is JSON\", function () { pm.response.to.be.json; });",
+                  "pm.test(\"Request succeeded\", function () { pm.expect(pm.response.code).to.be.below(400); });",
+                  "const json = pm.response.json();",
+                  "pm.test(\"Uses the standard success envelope\", function () { pm.expect(json.success).to.eql(true); });",
+                  "pm.test(\"Returns 403\", function () { pm.response.to.have.status(403); });",
+                  "const json = pm.response.json();",
+                  "pm.test(\"RBAC denial is explicit\", function () { pm.expect(json.errorCode).to.eql(\"FORBIDDEN\"); });"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
