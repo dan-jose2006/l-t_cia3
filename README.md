@@ -7,9 +7,9 @@ A complete CIA-3 backend project for a university library. It replaces manual re
 | Name | Roll number | Department | Section |
 |---|---:|---|---|
 | Dan Abraham Jose | 2463017 | B.Tech Artificial Intelligence & Machine Learning | 5BTAIML |
-| _Add teammate_ | _Roll number_ | _Department_ | _Section_ |
-| _Add teammate_ | _Roll number_ | _Department_ | _Section_ |
-| _Add teammate (if applicable)_ | _Roll number_ | _Department_ | _Section_ |
+| Diya Susan Binu  | 2463019 | B.Tech Artificial Intelligence & Machine Learning | 5BTAIML |
+| Doylin Jovita J  | 2463068 | B.Tech Artificial Intelligence & Machine Learning | 5BTAIML |
+
 
 > Replace the placeholder rows before submission.
 
